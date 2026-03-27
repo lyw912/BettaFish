@@ -2,7 +2,7 @@
 DedupFilter 节点 — 去重过滤
 
 Phase 1：URL 精确去重（标准化后比较）。
-Phase 2 扩展：MinHash 内容去重（datasketch）。
+Phase 2：MinHash LSH 内容去重（datasketch，阈值 0.80）。
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ from urllib.parse import urlparse, urlunparse
 from loguru import logger
 
 from ..state import QueryAgentState, SourceItem
+from ...fusion.dedup import minhash_dedup
 
 
 # ---------------------------------------------------------------------------
@@ -56,14 +57,13 @@ def dedup_filter_node(state: QueryAgentState) -> dict:
             seen_urls.add(norm)
             url_deduped.append(s)
 
-    # Phase 2 扩展点：在此调用 MinHash 内容去重
-    # content_deduped = minhash_dedup(url_deduped, threshold=0.8)
-    content_deduped = url_deduped  # Phase 1 直接透传
+    # Phase 2：MinHash LSH 内容去重（80% 相似度阈值）
+    content_deduped = minhash_dedup(url_deduped, threshold=0.80)
 
     trace = (
         f"[DedupFilter] 输入{len(sources)}条, "
         f"URL去重后{len(url_deduped)}条, "
-        f"最终{len(content_deduped)}条"
+        f"内容去重后{len(content_deduped)}条"
     )
     logger.info(trace)
 

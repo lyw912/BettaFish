@@ -49,9 +49,9 @@ STANCE_MATRIX_PROMPT = """你是一位资深舆情分析师。针对以下查询
 - 子查询使用具体搜索关键词，不是抽象描述
 - 中文话题优先用中文子查询；国际话题可中英混合
 - 每个子查询标注：目标立场(target_stance)、建议搜索源(target_source)、优先级(priority 1-5)
-- "official" 立场建议用 "tavily"（可限定官方域名）
-- "support"/"oppose" 如涉及社媒民意，建议用 "insight_db"；若无社媒数据则用 "any"
-- "neutral"/"background" 建议用 "bocha"（中文分析类文章覆盖好）
+- "official" 立场使用 "tavily"，优先级设为 1-2（深度搜索）
+- "support"/"oppose" 使用 "any"，优先级设为 3-4
+- "neutral"/"background" 中文内容使用 "anspire"，国际内容使用 "tavily"，优先级设为 3-4
 
 只输出 JSON 数组，不要有其他文字：
 [
